@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Online Grocery Store{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% if not current_user.is_authenticated %}
+    <!-- Welcome Section for Non-authenticated Users -->
+    <div class="text-center py-5">
+        <h1 class="display-4 mb-4">Welcome to Online Grocery Store</h1>
+        <p class="lead mb-5">Your one-stop shop for fresh groceries and daily essentials.</p>
+        
+        <div class="row justify-content-center">
+            <div class="col-md-5 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title"><i class="fas fa-sign-in-alt"></i> Login</h3>
+                        <p class="card-text">Already have an account? Sign in to start shopping!</p>
+                        <form method="POST" action="{{ url_for('auth.login') }}">
+                            <div class="mb-3">
+                                <input type="text" class="form-control" name="username" placeholder="Username" required>
+                            </div>
+                            <div class="mb-3">
+                                <input type="password" class="form-control" name="password" placeholder="Password" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-lg w-100">Login</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-5 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title"><i class="fas fa-user-plus"></i> Register</h3>
+                        <p class="card-text">New to our store? Create an account now!</p>
+                        <form method="POST" action="{{ url_for('auth.register') }}">
+                            <div class="mb-3">
+                                <input type="text" class="form-control" name="username" placeholder="Username" required>
+                            </div>
+                            <div class="mb-3">
+                                <input type="email" class="form-control" name="email" placeholder="Email" required>
+                            </div>
+                            <div class="mb-3">
+                                <input type="password" class="form-control" name="password" placeholder="Password" required>
+                            </div>
+                            <button type="submit" class="btn btn-success btn-lg w-100">Register</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% elif current_user.role == 'pending' %}
+    <!-- Role Selection Section -->
+    <div class="text-center py-5">
+        <h1 class="display-4 mb-4">Welcome, {{ current_user.username }}!</h1>
+        <p class="lead mb-5">Please select your role to continue.</p>
+
+        <div class="row justify-content-center">
+            <div class="col-md-5 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-shopping-cart fa-4x mb-3 text-primary"></i>
+                        <h3 class="card-title">Customer</h3>
+                        <p class="card-text">Browse products, make purchases, and track your orders.</p>
+                        <form method="POST" action="{{ url_for('auth.select_role') }}">
+                            <input type="hidden" name="role" value="customer">
+                            <button type="submit" class="btn btn-primary btn-lg">Continue as Customer</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-5 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-user-cog fa-4x mb-3 text-success"></i>
+                        <h3 class="card-title">Administrator</h3>
+                        <p class="card-text">Manage inventory, process orders, and oversee the store.</p>
+                        <form method="POST" action="{{ url_for('auth.select_role') }}">
+                            <input type="hidden" name="role" value="admin">
+                            <button type="submit" class="btn btn-success btn-lg">Continue as Admin</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% elif current_user.role == 'admin' %}
+    <!-- Admin Dashboard -->
+    <h1 class="mb-4">Welcome, {{ current_user.username }}!</h1>
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-box"></i> Inventory Management</h5>
+                    <p class="card-text">Manage your store's products and stock levels.</p>
+                    <a href="{{ url_for('admin.manage_inventory') }}" class="btn btn-primary">Manage Inventory</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-shopping-bag"></i> Order Management</h5>
+                    <p class="card-text">View and manage customer orders.</p>
+                    <a href="{{ url_for('admin.view_orders') }}" class="btn btn-primary">View Orders</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    <!-- Customer Dashboard -->
+    <h1 class="mb-4">Welcome, {{ current_user.username }}!</h1>
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-shopping-cart"></i> My Cart</h5>
+                    <p class="card-text">View and manage items in your shopping cart.</p>
+                    <a href="{{ url_for('store.view_cart') }}" class="btn btn-primary">View Cart</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-store"></i> Browse Products</h5>
+                    <p class="card-text">Explore our wide range of products.</p>
+                    <a href="{{ url_for('store.browse_products') }}" class="btn btn-primary">Shop Now</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-box"></i> My Orders</h5>
+                    <p class="card-text">Track your orders and view order history.</p>
+                    <a href="{{ url_for('store.my_orders') }}" class="btn btn-primary">View Orders</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Featured Products Section -->
+    <div class="mt-4">
+        <h2 class="mb-3">Featured Products</h2>
+        <div class="row">
+            {% for product in featured_products %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <img src="{{ url_for('static', filename=product.image_url) }}" class="card-img-top" alt="{{ product.name }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text">{{ product.description[:100] }}...</p>
+                        <p class="card-text"><strong>${{ "%.2f"|format(product.price) }}</strong></p>
+                        <a href="{{ url_for('store.product_detail', product_id=product.id) }}" class="btn btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 

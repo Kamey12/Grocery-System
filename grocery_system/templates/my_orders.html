@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}My Order History{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4"><i class="fas fa-history me-2"></i>Order History</h2>
+
+    {% if orders %}
+    <div class="table-responsive">
+        <table class="table table-hover shadow-sm border rounded">
+            <thead class="table-light">
+                <tr>
+                    <th>Order ID</th>
+                    <th>Date</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>#{{ order.id }}</td>
+                    <td>{{ order.created_at.strftime('%Y-%m-%d') }}</td>
+                    <td>${{ "%.2f"|format(order.total_amount) }}</td>
+                    <td>
+                        {% if order.status == 'shipped' %}
+                            <span class="badge bg-success">Shipped</span>
+                        {% elif order.status == 'cancelled' %}
+                            <span class="badge bg-info">Cancelled</span>
+                        {% elif order.status == 'delivered' %}
+                            <span class="badge bg-primary">Delivered</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark">Processing</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ url_for('store.track_order', order_id=order.id) }}" class="btn btn-sm btn-outline-primary">
+                            View Details
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center py-5">
+        <h4>You haven't placed any orders yet.</h4>
+        <a href="{{ url_for('store.browse_products') }}" class="btn btn-primary mt-3">Start Shopping</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
