@@ -14,23 +14,49 @@ def register():
         username = request.form['username']
         email = request.form['email']
         password = request.form['password']
+        role = request.form.get('role') 
         
+  
         if User.query.filter_by(username=username).first():
-            flash('Username already exists')
+            flash('Username already exists', 'danger') 
             return redirect(url_for('auth.register'))
             
+        if User.query.filter_by(email=email).first():
+            flash('Email already exists', 'danger')
+            return redirect(url_for('auth.register'))
+
+        if role == 'admin':
+            secret_code = request.form.get('admin_secret')
+            
+           
+            if secret_code != 'admin123': 
+                flash('Invalid Admin Secret Code! Registration failed.', 'danger')
+                return redirect(url_for('auth.register'))
+
+     
+        if role not in ['customer', 'admin']:
+            role = 'customer'
+
+ 
         user = User(
             username=username,
             email=email,
             password_hash=generate_password_hash(password),
-            role='pending'
+            role=role  
         )
+        
         db.session.add(user)
         db.session.commit()
         
         login_user(user)
-        flash('Registration successful! Please select your role.')
+        
+        if role == 'admin':
+            flash('Admin account created successfully!', 'success')
+        else:
+            flash('Registration successful! Welcome to Vegefoods.', 'success')
+            
         return redirect(url_for('main.dashboard'))
+        
     return render_template('register.html')
 
 @auth_bp.route('/login', methods=['GET', 'POST'])

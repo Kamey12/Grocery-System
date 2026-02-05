@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
 from ..models import db, Product, CartItem, Order, OrderItem
 
@@ -6,8 +6,30 @@ store_bp = Blueprint('store', __name__)
 
 @store_bp.route('/products')
 def browse_products():
-    products = Product.query.all()
-    return render_template('products.html', products=products)
+    if current_user.is_authenticated and current_user.role == 'admin':
+        flash("Admins manage inventory, they don't shop!")
+        return redirect(url_for('admin.manage_inventory'))
+    
+    category = request.args.get('category')
+    search_query = request.args.get('q')
+    
+    query = Product.query
+    
+    if category:
+        query = query.filter_by(category=category)
+    
+    if search_query:
+        query = query.filter(Product.name.ilike(f'%{search_query}%'))
+    
+    products = query.all()
+    
+    # Get distinct categories for the sidebar
+    categories = [r.category for r in db.session.query(Product.category).distinct()]
+    
+    return render_template('products.html', 
+                         products=products, 
+                         categories=categories,
+                         current_category=category)
 
 @store_bp.route('/product/<int:product_id>')
 def product_detail(product_id):
@@ -18,15 +40,13 @@ def product_detail(product_id):
 @login_required
 def add_to_cart(product_id):
     if current_user.role != 'customer':
-        flash('Only customers can add items to cart')
-        return redirect(url_for('store.browse_products'))
+        return jsonify({'success': False, 'message': 'Only customers can shop'})
 
     quantity = int(request.form.get('quantity', 1))
     product = Product.query.get_or_404(product_id)
     
     if quantity > product.stock:
-        flash(f'Only {product.stock} units available')
-        return redirect(url_for('store.browse_products'))
+        return jsonify({'success': False, 'message': 'Not enough stock'})
     
     cart_item = CartItem.query.filter_by(
         user_id=current_user.id, 
@@ -40,9 +60,16 @@ def add_to_cart(product_id):
         db.session.add(cart_item)
     
     db.session.commit()
-    flash('Product added to cart')
-    return redirect(url_for('store.view_cart'))
-
+    
+    # Calculate new total items in cart
+    new_count = CartItem.query.filter_by(user_id=current_user.id).count()
+    
+    # Return JSON instead of Redirect
+    return jsonify({
+        'success': True, 
+        'cart_count': new_count, 
+        'message': 'Added to cart!'
+    })
 @store_bp.route('/cart')
 @login_required
 def view_cart():

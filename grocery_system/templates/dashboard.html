@@ -1,170 +1,67 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard - Online Grocery Store{% endblock %}
-
 {% block content %}
-<div class="container">
-    {% if not current_user.is_authenticated %}
-    <!-- Welcome Section for Non-authenticated Users -->
-    <div class="text-center py-5">
-        <h1 class="display-4 mb-4">Welcome to Online Grocery Store</h1>
-        <p class="lead mb-5">Your one-stop shop for fresh groceries and daily essentials.</p>
-        
-        <div class="row justify-content-center">
-            <div class="col-md-5 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h3 class="card-title"><i class="fas fa-sign-in-alt"></i> Login</h3>
-                        <p class="card-text">Already have an account? Sign in to start shopping!</p>
-                        <form method="POST" action="{{ url_for('auth.login') }}">
-                            <div class="mb-3">
-                                <input type="text" class="form-control" name="username" placeholder="Username" required>
-                            </div>
-                            <div class="mb-3">
-                                <input type="password" class="form-control" name="password" placeholder="Password" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-lg w-100">Login</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+
+<section class="hero-wrap" style="background-image: url('static/images/banner/banner.jpg');">
+    <div class="overlay"></div> <div class="container h-100">
+        <div class="row no-gutters slider-text align-items-center justify-content-start" data-scrollax-parent="true">
             
-            <div class="col-md-5 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h3 class="card-title"><i class="fas fa-user-plus"></i> Register</h3>
-                        <p class="card-text">New to our store? Create an account now!</p>
-                        <form method="POST" action="{{ url_for('auth.register') }}">
-                            <div class="mb-3">
-                                <input type="text" class="form-control" name="username" placeholder="Username" required>
-                            </div>
-                            <div class="mb-3">
-                                <input type="email" class="form-control" name="email" placeholder="Email" required>
-                            </div>
-                            <div class="mb-3">
-                                <input type="password" class="form-control" name="password" placeholder="Password" required>
-                            </div>
-                            <button type="submit" class="btn btn-success btn-lg w-100">Register</button>
-                        </form>
-                    </div>
+            <div class="col-md-7 ftco-animate">
+                <h1 class="hero-title">Shopping for <br> fresh groceries</h1>
+                <p class="mb-4 text-white-50" style="font-size: 1.1rem; max-width: 500px;">
+                    Best groceries app ever. Pick your desired groceries from the menu.
+                </p>
+                
+                <div class="search-wrapper mb-4">
+                    <a href="{{ url_for('store.browse_products') }}" class="btn btn-primary rounded-pill px-4   ">
+                        Shop Now
+                    </a>
                 </div>
+                {% if not current_user.is_authenticated and not current_user.role == 'customer'%}
+                <p class="small text-white-50">Not yet member? 
+                    <a href="{{ url_for('auth.register') }}" class="text-warning text-decoration-none">Sign up now</a>
+                </p>
+                {% endif %}
             </div>
+
+        </div>
+    </div>
+</section>
+
+<div class="container mb-5 mt-5">
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-7 text-center heading-section">
+            <h2 class="mb-4">Featured Products</h2>
         </div>
     </div>
 
-    {% elif current_user.role == 'pending' %}
-    <!-- Role Selection Section -->
-    <div class="text-center py-5">
-        <h1 class="display-4 mb-4">Welcome, {{ current_user.username }}!</h1>
-        <p class="lead mb-5">Please select your role to continue.</p>
-
-        <div class="row justify-content-center">
-            <div class="col-md-5 mb-4">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <i class="fas fa-shopping-cart fa-4x mb-3 text-primary"></i>
-                        <h3 class="card-title">Customer</h3>
-                        <p class="card-text">Browse products, make purchases, and track your orders.</p>
-                        <form method="POST" action="{{ url_for('auth.select_role') }}">
-                            <input type="hidden" name="role" value="customer">
-                            <button type="submit" class="btn btn-primary btn-lg">Continue as Customer</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-5 mb-4">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <i class="fas fa-user-cog fa-4x mb-3 text-success"></i>
-                        <h3 class="card-title">Administrator</h3>
-                        <p class="card-text">Manage inventory, process orders, and oversee the store.</p>
-                        <form method="POST" action="{{ url_for('auth.select_role') }}">
-                            <input type="hidden" name="role" value="admin">
-                            <button type="submit" class="btn btn-success btn-lg">Continue as Admin</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {% elif current_user.role == 'admin' %}
-    <!-- Admin Dashboard -->
-    <h1 class="mb-4">Welcome, {{ current_user.username }}!</h1>
     <div class="row">
-        <div class="col-md-6 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title"><i class="fas fa-box"></i> Inventory Management</h5>
-                    <p class="card-text">Manage your store's products and stock levels.</p>
-                    <a href="{{ url_for('admin.manage_inventory') }}" class="btn btn-primary">Manage Inventory</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title"><i class="fas fa-shopping-bag"></i> Order Management</h5>
-                    <p class="card-text">View and manage customer orders.</p>
-                    <a href="{{ url_for('admin.view_orders') }}" class="btn btn-primary">View Orders</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {% else %}
-    <!-- Customer Dashboard -->
-    <h1 class="mb-4">Welcome, {{ current_user.username }}!</h1>
-    <div class="row">
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title"><i class="fas fa-shopping-cart"></i> My Cart</h5>
-                    <p class="card-text">View and manage items in your shopping cart.</p>
-                    <a href="{{ url_for('store.view_cart') }}" class="btn btn-primary">View Cart</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title"><i class="fas fa-store"></i> Browse Products</h5>
-                    <p class="card-text">Explore our wide range of products.</p>
-                    <a href="{{ url_for('store.browse_products') }}" class="btn btn-primary">Shop Now</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title"><i class="fas fa-box"></i> My Orders</h5>
-                    <p class="card-text">Track your orders and view order history.</p>
-                    <a href="{{ url_for('store.my_orders') }}" class="btn btn-primary">View Orders</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Featured Products Section -->
-    <div class="mt-4">
-        <h2 class="mb-3">Featured Products</h2>
-        <div class="row">
-            {% for product in featured_products %}
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    <img src="{{ url_for('static', filename=product.image_url) }}" class="card-img-top" alt="{{ product.name }}">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ product.name }}</h5>
-                        <p class="card-text">{{ product.description[:100] }}...</p>
-                        <p class="card-text"><strong>${{ "%.2f"|format(product.price) }}</strong></p>
-                        <a href="{{ url_for('store.product_detail', product_id=product.id) }}" class="btn btn-primary">View Details</a>
+        {% for product in featured_products %}
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="product-card h-100 shadow-sm">
+                <span class="discount-badge">30%</span>
+                
+                <a href="{{ url_for('store.product_detail', product_id=product.id) }}" class="d-block text-center p-3">
+                    <img src="{{ url_for('static', filename=product.image_url) }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: contain;">
+                </a>
+                
+                <div class="card-body text-center">
+                    <h5 class="card-title text-dark">{{ product.name }}</h5>
+                    <div class="price-wrapper mb-3">
+                        <span class="text-muted text-decoration-line-through me-2">${{ "%.2f"|format(product.price * 1.3) }}</span>
+                        <span class="price-new">${{ product.price }}</span>
                     </div>
+                    
+                    <form action="{{ url_for('store.add_to_cart', product_id=product.id) }}" method="POST" class="add-cart-form">
+                        <button type="submit" class="btn btn-primary w-100 rounded-pill">
+                            Add to Cart <i class="fas fa-shopping-cart ms-1"></i>
+                        </button>
+                    </form>
                 </div>
             </div>
-            {% endfor %}
         </div>
+        {% endfor %}
     </div>
-    {% endif %}
 </div>
-{% endblock %} 
+
+{% endblock %}

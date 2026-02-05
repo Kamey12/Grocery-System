@@ -3,53 +3,61 @@
 {% block title %}My Order History{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <h2 class="mb-4"><i class="fas fa-history me-2"></i>Order History</h2>
 
-    {% if orders %}
-    <div class="table-responsive">
-        <table class="table table-hover shadow-sm border rounded">
-            <thead class="table-light">
-                <tr>
-                    <th>Order ID</th>
-                    <th>Date</th>
-                    <th>Total</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for order in orders %}
-                <tr>
-                    <td>#{{ order.id }}</td>
-                    <td>{{ order.created_at.strftime('%Y-%m-%d') }}</td>
-                    <td>${{ "%.2f"|format(order.total_amount) }}</td>
-                    <td>
-                        {% if order.status == 'shipped' %}
-                            <span class="badge bg-success">Shipped</span>
-                        {% elif order.status == 'cancelled' %}
-                            <span class="badge bg-info">Cancelled</span>
-                        {% elif order.status == 'delivered' %}
-                            <span class="badge bg-primary">Delivered</span>
-                        {% else %}
-                            <span class="badge bg-warning text-dark">Processing</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        <a href="{{ url_for('store.track_order', order_id=order.id) }}" class="btn btn-sm btn-outline-primary">
-                            View Details
-                        </a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+<section class="ftco-section" style="padding: 100px 0;">
+    <div class="container">
+        <h2 class="mb-4 text-white fw-bold">
+            <i class="fas fa-history me-2 text-warning"></i>Order History
+        </h2>
+
+        {% if orders %}
+        <div class="table-responsive rounded-3 p-4" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(5px);">
+            
+            <table class="table text-white mb-0">
+                <thead style="border-bottom: 2px solid rgba(255,255,255,0.1);">
+                    <tr style="color: var(--primary-yellow);"> <th class="border-0 py-3">Order ID</th>
+                        <th class="border-0 py-3">Date</th>
+                        <th class="border-0 py-3">Total</th>
+                        <th class="border-0 py-3">Status</th>
+                        <th class="border-0 py-3">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: middle;">
+                        <td class="border-0 py-3">#{{ order.id }}</td>
+                        <td class="border-0 py-3 text-white-50">{{ order.created_at.strftime('%Y-%m-%d') }}</td>
+                        <td class="border-0 py-3 fw-bold">${{ "%.2f"|format(order.total_amount) }}</td>
+                        <td class="border-0 py-3">
+                            {% if order.status == 'shipped' %}
+                                <span class="badge bg-success rounded-pill px-3">Shipped</span>
+                            {% elif order.status == 'cancelled' %}
+                                <span class="badge bg-danger rounded-pill px-3">Cancelled</span>
+                            {% elif order.status == 'delivered' %}
+                                <span class="badge bg-primary rounded-pill px-3">Delivered</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark rounded-pill px-3">Processing</span>
+                            {% endif %}
+                        </td>
+                        <td class="border-0 py-3">
+                            <a href="{{ url_for('store.track_order', order_id=order.id) }}" class="btn btn-sm btn-outline-warning rounded-pill px-3">
+                                View Details
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        {% else %}
+        <div class="text-center py-5 rounded-3" style="background: rgba(255,255,255,0.05);">
+            <i class="fas fa-shopping-basket mb-3 text-white-50" style="font-size: 4rem;"></i>
+            <h4 class="text-white">You haven't placed any orders yet.</h4>
+            <a href="{{ url_for('store.browse_products') }}" class="btn btn-warning rounded-pill mt-3 px-4">Start Shopping</a>
+        </div>
+        {% endif %}
     </div>
-    {% else %}
-    <div class="alert alert-info text-center py-5">
-        <h4>You haven't placed any orders yet.</h4>
-        <a href="{{ url_for('store.browse_products') }}" class="btn btn-primary mt-3">Start Shopping</a>
-    </div>
-    {% endif %}
-</div>
+</section>
+
 {% endblock %}

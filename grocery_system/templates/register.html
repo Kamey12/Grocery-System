@@ -3,35 +3,82 @@
 {% block title %}Register - Online Grocery Store{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h2 class="text-center">Register</h2>
-            </div>
-            <div class="card-body">
-                <form method="POST">
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username" name="username" required>
+<section class="ftco-section" style="padding: 100px 0;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                
+                <div class="rounded-3 p-4 p-md-5 shadow-lg" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1);">
+                    
+                    <div class="text-center mb-4">
+                        <h2 class="text-white fw-bold">Register</h2>
+                        <p class="text-white-50">Create your account to start shopping.</p>
                     </div>
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
+
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label class="form-label text-white">Username</label>
+                            <input type="text" class="form-control text-white" name="username" required 
+                                   style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white;">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label text-white">Email</label>
+                            <input type="email" class="form-control text-white" name="email" required 
+                                   style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white;">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label text-white">Password</label>
+                            <input type="password" class="form-control text-white" name="password" required 
+                                   style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white;">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label text-white">Register As</label>
+                            <select class="form-select text-white" id="roleSelect" name="role" onchange="toggleAdminCode()"
+                                    style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white;">
+                                <option value="customer" class="text-dark">Customer</option>
+                                <option value="admin" class="text-dark">Admin (Store Manager)</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4" id="adminCodeGroup" style="display: none;">
+                            <label class="form-label text-warning">Admin Secret Code</label>
+                            <input type="password" class="form-control text-white" name="admin_secret" placeholder="Required for Admin"
+                                   style="background: rgba(255,255,255,0.1); border: 1px solid var(--primary-yellow); color: white;">
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-warning py-2 rounded-pill fw-bold text-dark">
+                                Register
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <div class="text-center mt-4">
+                        <p class="text-white-50 mb-0">Already have an account? 
+                            <a href="{{ url_for('auth.login') }}" class="text-warning text-decoration-none fw-bold">Login here</a>
+                        </p>
                     </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
-                    </div>
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-primary">Register</button>
-                    </div>
-                </form>
-                <div class="text-center mt-3">
-                    <p>Already have an account? <a href="{{ url_for('auth.login') }}">Login here</a></p>
+
                 </div>
             </div>
         </div>
     </div>
-</div>
-{% endblock %} 
+</section>
+
+<script>
+    function toggleAdminCode() {
+        var role = document.getElementById("roleSelect").value;
+        var codeDiv = document.getElementById("adminCodeGroup");
+        if (role === "admin") {
+            codeDiv.style.display = "block";
+            codeDiv.querySelector('input').required = true;
+        } else {
+            codeDiv.style.display = "none";
+            codeDiv.querySelector('input').required = false;
+        }
+    }
+</script>
+{% endblock %}

@@ -3,31 +3,38 @@
 {% block title %}Checkout - Online Grocery Store{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <h1 class="mb-4">Checkout</h1>
-    
-    <div class="row">
-        <div class="col-md-8">
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">Shipping Information</h5>
+<section class="ftco-section" style="padding: 100px 0;">
+    <div class="container">
+        <h1 class="mb-5 text-white fw-bold">
+            <i class="fas fa-credit-card me-2 text-warning"></i>Checkout
+        </h1>
+        
+        <div class="row">
+            <div class="col-md-8">
+                <div class="rounded-3 p-4 p-md-5 shadow-lg mb-4" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1);">
+                    
+                    <h4 class="text-white mb-4 border-bottom border-secondary pb-2">Shipping Information</h4>
+                    
                     <form action="{{ url_for('store.process_checkout') }}" method="POST">
-                        <div class="mb-3">
-                            <label for="address" class="form-label">Shipping Address</label>
-                            <textarea class="form-control" id="address" name="address" rows="3" required>{{ current_user.address or '' }}</textarea>
+                        <div class="mb-4">
+                            <label for="address" class="form-label text-white">Shipping Address</label>
+                            <textarea class="form-control text-white" id="address" name="address" rows="3" required
+                                      style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">{{ current_user.address or '' }}</textarea>
                         </div>
-                        <div class="mb-3">
-                            <label for="phone" class="form-label">Phone Number</label>
-                            <input type="tel" class="form-control" id="phone" name="phone" value="{{ current_user.phone or '' }}" required>
+                        <div class="mb-5">
+                            <label for="phone" class="form-label text-white">Phone Number</label>
+                            <input type="tel" class="form-control text-white" id="phone" name="phone" value="{{ current_user.phone or '' }}" required
+                                   style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
                         </div>
                         
-                        <h5 class="mt-4">Payment Method</h5>
-                        <div class="mb-3">
-                            <div class="form-check">
+                        <h4 class="text-white mb-4 border-bottom border-secondary pb-2">Payment Method</h4>
+                        
+                        <div class="mb-4 text-white">
+                            <div class="form-check mb-2">
                                 <input class="form-check-input" type="radio" name="payment_method" id="credit_card" value="credit_card" checked>
                                 <label class="form-check-label" for="credit_card">Credit Card</label>
                             </div>
-                            <div class="form-check">
+                            <div class="form-check mb-2">
                                 <input class="form-check-input" type="radio" name="payment_method" id="debit_card" value="debit_card">
                                 <label class="form-check-label" for="debit_card">Debit Card</label>
                             </div>
@@ -37,53 +44,58 @@
                             </div>
                         </div>
                         
-                        <div id="card_details" class="mb-3">
-                            <label for="cc_number" class="form-label">Card Number</label>
-                            <input type="text" class="form-control" id="cc_number" name="cc_number" pattern="\d{16}" placeholder="1234567890123456">
+                        <div id="card_details" class="mb-4 p-3 rounded" style="background: rgba(0,0,0,0.2);">
+                            <label for="cc_number" class="form-label text-white">Card Number</label>
+                            <input type="text" class="form-control text-white mb-3" id="cc_number" name="cc_number" pattern="\d{16}" placeholder="1234567890123456"
+                                   style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
                             
-                            <div class="row mt-3">
-                                <div class="col-md-6">
-                                    <label for="cc_expiry" class="form-label">Expiry Date</label>
-                                    <input type="text" class="form-control" id="cc_expiry" name="cc_expiry" pattern="\d{2}/\d{2}" placeholder="MM/YY">
+                            <div class="row">
+                                <div class="col-md-6 mb-3 mb-md-0">
+                                    <label for="cc_expiry" class="form-label text-white">Expiry Date</label>
+                                    <input type="text" class="form-control text-white" id="cc_expiry" name="cc_expiry" pattern="\d{2}/\d{2}" placeholder="MM/YY"
+                                           style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="cc_cvv" class="form-label">CVV</label>
-                                    <input type="text" class="form-control" id="cc_cvv" name="cc_cvv" pattern="\d{3}" placeholder="123">
+                                    <label for="cc_cvv" class="form-label text-white">CVV</label>
+                                    <input type="text" class="form-control text-white" id="cc_cvv" name="cc_cvv" pattern="\d{3}" placeholder="123"
+                                           style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
                                 </div>
                             </div>
                         </div>
                         
-                        <button type="submit" class="btn btn-primary">Place Order</button>
+                        <button type="submit" class="btn btn-warning w-100 py-3 rounded-pill fw-bold text-dark fs-5">
+                            Place Order
+                        </button>
                     </form>
                 </div>
             </div>
-        </div>
-        
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Order Summary</h5>
-                    <table class="table">
-                        <tbody>
-                            {% for item in cart_items %}
-                            <tr>
-                                <td>{{ item.product.name }} x {{ item.quantity }}</td>
-                                <td class="text-end">${{ "%.2f"|format(item.product.price * item.quantity) }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <th>Total</th>
-                                <th class="text-end">${{ "%.2f"|format(total) }}</th>
-                            </tr>
-                        </tfoot>
-                    </table>
+            
+            <div class="col-md-4">
+                <div class="rounded-3 p-4 shadow-lg sticky-top" style="top: 100px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <h5 class="text-white fw-bold mb-4">Order Summary</h5>
+                    <div class="table-responsive">
+                        <table class="table text-white mb-0">
+                            <tbody>
+                                {% for item in cart_items %}
+                                <tr style="border-color: rgba(255,255,255,0.1);">
+                                    <td class="border-0 ps-0">{{ item.product.name }} <span class="text-white-50">x {{ item.quantity }}</span></td>
+                                    <td class="border-0 text-end pe-0">${{ "%.2f"|format(item.product.price * item.quantity) }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot style="border-top: 2px solid rgba(255,255,255,0.2);">
+                                <tr>
+                                    <th class="ps-0 pt-3 fs-5">Total</th>
+                                    <th class="text-end pe-0 pt-3 fs-4 text-warning">${{ "%.2f"|format(total) }}</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 {% endblock %}
 
 {% block scripts %}
@@ -92,9 +104,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const cardDetails = document.getElementById('card_details');
     const paymentMethods = document.getElementsByName('payment_method');
     
+
+    const cardInputs = cardDetails.querySelectorAll('input');
+
     function toggleCardDetails() {
         const selectedMethod = document.querySelector('input[name="payment_method"]:checked').value;
-        cardDetails.style.display = selectedMethod === 'cash_on_delivery' ? 'none' : 'block';
+        
+        if (selectedMethod === 'cash_on_delivery') {
+            cardDetails.style.display = 'none';
+    
+            cardInputs.forEach(input => input.removeAttribute('required'));
+        } else {
+            cardDetails.style.display = 'block';
+
+        }
     }
     
     paymentMethods.forEach(method => {
@@ -104,4 +127,4 @@ document.addEventListener('DOMContentLoaded', function() {
     toggleCardDetails();
 });
 </script>
-{% endblock %} 
+{% endblock %}

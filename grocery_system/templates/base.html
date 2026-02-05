@@ -3,116 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}{% endblock %}</title>
-    <!-- Bootstrap CSS -->
+    <title>{% block title %}Vegefoods{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        .navbar-brand {
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-        .nav-link {
-            font-size: 1.1rem;
-        }
-        .cart-count {
-            position: relative;
-            top: -8px;
-            right: 5px;
-            padding: 2px 6px;
-            border-radius: 50%;
-            font-size: 0.7rem;
-            background-color: #dc3545;
-            color: white;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+    
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('main.index') }}">
-                <i class="fas fa-store me-2"></i>Grocery Store
+                <i class="fas fa-shopping-basket text-warning me-2"></i> VEGEFOODS
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#ftco-nav">
+                <span class="fa fa-bars"></span> Menu
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('store.browse_products') }}">
-                            <i class="fas fa-shopping-basket me-1"></i>Products
-                        </a>
-                    </li>
+
+            <div class="collapse navbar-collapse" id="ftco-nav">
+                
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0 align-items-center">
                     {% if current_user.is_authenticated and current_user.role == 'admin' %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('admin.manage_inventory') }}">
-                            <i class="fas fa-boxes me-1"></i>Inventory
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('admin.view_orders') }}">
-                            <i class="fas fa-clipboard-list me-1"></i>Orders
-                        </a>
-                    </li>
-                    {% endif %}
-                </ul>
-                <ul class="navbar-nav">
-                    {% if current_user.is_authenticated %}
-                    {% if current_user.role == 'customer' %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('store.view_cart') }}">
-                            <i class="fas fa-shopping-cart me-1"></i>Cart
-                            {% if current_user.cart_items %}
-                            <span class="cart-count">{{ current_user.cart_items|length }}</span>
-                            {% endif %}
-                        </a>
-                    </li>
-                    {% endif %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.dashboard') }}">
-                            <i class="fas fa-user me-1"></i>{{ current_user.username }}
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('auth.logout') }}">
-                            <i class="fas fa-sign-out-alt me-1"></i>Logout
-                        </a>
-                    </li>
+                        <li class="nav-item mx-2"><a href="{{ url_for('admin.manage_inventory') }}" class="nav-link">Inventory</a></li>
+                        <li class="nav-item mx-2"><a href="{{ url_for('admin.view_orders') }}" class="nav-link">Orders</a></li>
                     {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('auth.login') }}">
-                            <i class="fas fa-sign-in-alt me-1"></i>Login
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('auth.register') }}">
-                            <i class="fas fa-user-plus me-1"></i>Register
-                        </a>
-                    </li>
+                        <li class="nav-item mx-3"><a href="{{ url_for('main.index') }}" class="nav-link">Home</a></li>
+                        <li class="nav-item mx-3"><a href="{{ url_for('store.browse_products') }}" class="nav-link">Products</a></li>
+
+                        
+                        {% if current_user.is_authenticated %}
+                            <li class="nav-item mx-3"><a href="{{ url_for('store.my_orders') }}" class="nav-link">My Orders</a></li>
+                        {% endif %}
                     {% endif %}
                 </ul>
+
+                <ul class="navbar-nav mb-2 mb-lg-0 align-items-center">
+                    {% if current_user.is_authenticated and current_user.role == 'admin' %}
+                         <li class="nav-item">
+                             <a href="{{ url_for('auth.logout') }}" class="btn btn-warning text-dark px-4 rounded-pill fw-bold">Logout</a>
+                         </li>
+                    {% else %}
+                         {% if current_user.is_authenticated %}
+                            <li class="nav-item me-3">
+                                <a href="{{ url_for('store.view_cart') }}" class="nav-link position-relative btn btn-outline-light rounded-circle p-2" style="width: 40px; height: 40px; display:flex; justify-content:center; align-items:center;">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    <span class="cart-count">
+                                        {% if current_user.cart_items %}{{ current_user.cart_items|length }}{% else %}0{% endif %}
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ url_for('auth.logout') }}" class="btn btn-warning text-dark px-4 rounded-pill fw-bold">Logout</a>
+                            </li>
+                         {% else %}
+                            <li class="nav-item mx-2"><a href="{{ url_for('auth.login') }}" class="btn btn-warning text-dark px-4 rounded-pill fw-bold">Login</a></li>
+                            <li class="nav-item">
+                                <a href="{{ url_for('auth.register') }}" class="btn btn-warning text-dark px-4 rounded-pill fw-bold">Sign Up</a>
+                            </li>
+                         {% endif %}
+                    {% endif %}
+                </ul>
+
             </div>
         </div>
     </nav>
 
-    <div class="container">
+    <div class="container mt-3">
         {% with messages = get_flashed_messages() %}
         {% if messages %}
-        {% for message in messages %}
-        <div class="alert alert-info alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-        {% endfor %}
+            {% for message in messages %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
         {% endif %}
         {% endwith %}
-
-        {% block content %}{% endblock %}
     </div>
 
-    <!-- Bootstrap Bundle with Popper -->
+    {% block content %}{% endblock %}
+
+    {% if not current_user.is_authenticated or current_user.role != 'admin' %}
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>Vegefoods</h5>
+                    <p>Providing fresh, organic food directly from the farm to your table.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Links</h5>
+                    <a href="{{ url_for('main.index') }}">Home</a>
+                    <a href="{{ url_for('store.browse_products') }}">Shop</a>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contact</h5>
+                    <p><i class="fas fa-envelope me-2"></i> info@vegefoods.com</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    {% endif %}
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    {% block scripts %}{% endblock %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const forms = document.querySelectorAll('.add-cart-form');
+            forms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const formData = new FormData(this);
+                    const btn = this.querySelector('button');
+                    const originalBtnContent = btn.innerHTML;
+                    
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                    btn.disabled = true;
+
+                    fetch(this.action, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const navBadges = document.querySelectorAll('.cart-count');
+                            navBadges.forEach(badge => badge.innerText = data.cart_count);
+                            
+                            btn.innerHTML = '<i class="fas fa-check"></i> Added';
+                            btn.classList.add('btn-success'); 
+                            
+                            setTimeout(() => {
+                                btn.innerHTML = originalBtnContent;
+                                btn.classList.remove('btn-success');
+                                btn.disabled = false;
+                            }, 2000);
+                        } else {
+                            alert(data.message);
+                            btn.innerHTML = originalBtnContent;
+                            btn.disabled = false;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        btn.innerHTML = originalBtnContent;
+                        btn.disabled = false;
+                    });
+                });
+            });
+        });
+    </script>
 </body>
-</html> 
+</html>
