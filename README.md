@@ -61,10 +61,12 @@ The system automatically creates an Admin account on the first run:
 * Username: `admin`
 * Password: `admin123`
 
-📂 Project Structure
+## 📂 Project Structure
 
+```text
 GROCERY SYSTEM/
-├── run.py                   # Entry point
+├── screenshots/             # Images for README
+├── run.py                   # Application Entry point
 ├── requirements.txt         # Dependencies
 └── grocery_system/
     ├── __init__.py          # App factory
@@ -72,3 +74,27 @@ GROCERY SYSTEM/
     ├── routes/              # Modular routes (auth, main, store, admin)
     ├── static/              # CSS, Images, JS
     └── templates/           # HTML files
+```
+## 📸 Project Screenshots
+
+| **Dashboard** | **Product Page** |
+|:---:|:---:|
+| ![Dashboard](screenshots/dashboard.png) | ![Products](screenshots/products.png) |
+| *Modern landing page with floating cards* | *Product page to browse* |
+
+| **Shopping Cart** | **Secure Checkout** |
+|:---:|:---:|
+| ![Cart](screenshots/cart.png) | ![Checkout](screenshots/checkout.png) |
+| *Interactive cart with quantity controls* | *Checkout with payment validation* |
+
+| **Admin Inventory** | **Order Status Update** |
+|:---:|:---:|
+| ![Inventory](screenshots/inventory.png) | ![OrderManagement](screenshots/order%20management.png) |
+| *Admin Access page to Add,Update,Delete Inventory* | *Validate & Update the status of Order* |
+
+| **SignUp** | **LogIn** |
+|:---:|:---:|
+| ![Signup](screenshots/signup.png) | ![Login](screenshots/login.png) |
+| *Signup Page* | *Login Page* |
+
+---
